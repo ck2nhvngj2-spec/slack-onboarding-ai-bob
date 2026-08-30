@@ -1,0 +1,8 @@
+Ticket: BUG-104
+Status: Open
+Title: Auth test fails intermittently in CI/CD pipeline
+
+Description:
+The `verifyToken` unit test keeps failing during the automated GitHub Actions build. 
+Root cause analysis indicates that the Redis cache instance isn't spinning up fast enough before the test executes, causing a timeout error. 
+Workaround: Add a 2-second delay before running the auth test suite.
