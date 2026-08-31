@@ -9,6 +9,35 @@ An intelligent, context-aware Slack chatbot designed to automate engineering onb
 * **Integration Layer:** Built with the Slack Bolt framework (TypeScript/Node.js) using WebSocket connections (Socket Mode) for real-time, secure communication without public endpoints.
 * **Session Management:** In-memory tracking isolates user sessions via Slack user IDs, ensuring context is maintained per user across different channels.
 
+'''mermaid
+graph TD
+    %% Define styles
+    classDef slack fill:#4A154B,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef nodejs fill:#339933,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef db fill:#316192,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef ai fill:#0f62fe,stroke:#fff,stroke-width:2px,color:#fff;
+
+    %% Nodes
+    User[Slack User]:::slack
+    Bolt[Slack Bolt API / Node.js]:::nodejs
+    Session[(In-Memory Session)]:::db
+    Chroma[(ChromaDB Vector Store)]:::db
+    Bob[IBM Bob 2.0 Cognitive Engine]:::ai
+
+    %% Connections
+    User -- "1. Sends Query (@Bot)" --> Bolt
+    Bolt -- "2. Checks/Updates State" --> Session
+    Bolt -- "3. Semantic Search" --> Chroma
+    Chroma -- "4. Returns Context Docs" --> Bolt
+    Bolt -- "5. Query + Context" --> Bob
+    
+    %% Confidence logic
+    Bob -- "6. Response (Confidence >= 0.65)" --> Bolt
+    Bob -. "6. Escalation (Confidence < 0.65)" .-> Bolt
+    
+    Bolt -- "7. Replies in Thread" --> User
+'''
+
 ## Key Features
 
 * **Intelligent Escalation:** Uses a strict `CONFIDENCE_THRESHOLD` (default: 0.65). If the cognitive engine's confidence falls below this metric, the system elegantly escalates the query rather than hallucinating.
